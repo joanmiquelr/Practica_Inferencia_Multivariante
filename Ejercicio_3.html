@@ -69,7 +69,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <link href="Ejercicio_3_files/libs/quarto-html/quarto-syntax-highlighting-37eea08aefeeee20ff55810ff984fec1.css" rel="stylesheet" id="quarto-text-highlighting-styles">
 <script src="Ejercicio_3_files/libs/bootstrap/bootstrap.min.js"></script>
 <link href="Ejercicio_3_files/libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="Ejercicio_3_files/libs/bootstrap/bootstrap-d50ee87fe46d4d2beec7c25344de33e3.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<link href="Ejercicio_3_files/libs/bootstrap/bootstrap-ab4bea3960c81ed2b102ab419a1cc070.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
 
   <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
   <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
@@ -210,9 +210,9 @@ window.Quarto = {
 <div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>media <span class="ot">=</span> <span class="fu">mean</span>(Y)</span>
 <span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>n <span class="ot">=</span> <span class="dv">10</span></span>
 <span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>vector_centrado <span class="ot">=</span> (Y<span class="sc">-</span>media)<span class="sc">^</span><span class="dv">2</span></span>
-<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>var <span class="ot">=</span> <span class="dv">1</span><span class="sc">/</span>n <span class="sc">*</span> <span class="fu">sum</span>(vector_centrado)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>var <span class="ot">=</span> <span class="dv">1</span><span class="sc">/</span>(n<span class="dv">-1</span>) <span class="sc">*</span> <span class="fu">sum</span>(vector_centrado)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-<p>Asi, los estimadores de máxima verosimilitud son 10.5 mmHg y 8.25 mmHg<span class="math inline">\(^2\)</span> para la media y la varianza respectivamente.</p>
+<p>Asi, los estimadores de máxima verosimilitud son 10.5 mmHg y 9.1666667 mmHg<span class="math inline">\(^2\)</span> para la media y la varianza respectivamente.</p>
 <ol start="2" type="a">
 <li>Calcula la matriz de información de Fisher para los parámetros <span class="math inline">\(\mu\)</span> y <span class="math inline">\(\sigma^2\)</span> en este modelo e interpreta los resultados.</li>
 </ol>
@@ -264,11 +264,20 @@ F(\mu, \sigma^2) =
 -E(U_{\mu\mu}) = \frac{10}{\sigma^2}, \quad -E(U_{\mu\sigma^2}) = 0, \quad -E(U_{\sigma^2\sigma^2}) = \frac{5}{\sigma^4}
 \]</span></p>
 <p>Por lo tanto, la matriz de información de Fisher será en nuestro caso</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>F<span class="ot">=</span><span class="fu">matrix</span>(<span class="fu">c</span>(<span class="dv">10</span><span class="sc">/</span>var, <span class="dv">0</span>, <span class="dv">0</span>, <span class="dv">5</span><span class="sc">/</span>var<span class="sc">^</span><span class="dv">2</span>), <span class="at">ncol=</span><span class="dv">2</span>)</span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>F</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>         [,1]       [,2]
+[1,] 1.090909 0.00000000
+[2,] 0.000000 0.05950413</code></pre>
+</div>
+</div>
 <p><span class="math display">\[
 F(\mu, \sigma^2) =
 \begin{pmatrix}
-1.212121&amp; 0 \\
-0 &amp; 0.07346189
+1.090909 &amp; 0 \\
+0 &amp; 0.05950413
 \end{pmatrix}
 \]</span></p>
 <p>El primer valor de la diagonal es <span class="math inline">\(\frac{n}{\sigma^2}\)</span> por lo tanto cuantas más muestras tengamos y cuanto más concentrados estén los datos (<span class="math inline">\(\sigma^2\)</span> más pequeña), más información tendremos sobre la media.&nbsp;</p>
