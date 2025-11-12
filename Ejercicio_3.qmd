@@ -1,0 +1,178 @@
+
+---
+title: "Ejercicio 3 de estimación y contrastes multivariantes"
+subtitle: "23217- Análisis de Datos para el GMAT"
+date: today
+format:
+  html:
+    theme: lumen
+    toc: true
+    toc-depth: 3
+Rendering:
+    embed-resources: true
+editor: 
+  markdown: 
+    wrap: 72
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, warning = FALSE, message = FALSE)
+```
+
+
+## Problema 3
+
+Una clínica está realizando un estudio para evaluar la eficacia de un
+nuevo tratamiento médico para reducir la presión arterial. Se selecciona
+una muestra de $n = 10$ pacientes y se mide la disminución de la presión
+arterial (en mmHg) después de aplicar el tratamiento. El cambio en la
+presión arterial se modela mediante una distribución normal con media
+$\mu$ y varianza $\sigma^2$.
+
+Las disminuciones observadas en la presión arterial de los pacientes son
+las siguientes (en mmHg):
+
+| Paciente | Disminución (Y) |
+|----------|-----------------|
+| 1        | 12              |
+| 2        | 8               |
+| 3        | 10              |
+| 4        | 15              |
+| 5        | 7               |
+| 6        | 9               |
+| 7        | 14              |
+| 8        | 11              |
+| 9        | 13              |
+| 10       | 6               |
+
+Se asume que los datos provienen de una distribución normal
+$Y_i \sim N(\mu, \sigma^2)$.
+
+Primero crearemos un vector con los datos recogidos en la variable $Y$.
+
+```{r}
+Y = c(12, 8, 10, 15, 7, 9, 14, 11, 13, 6)
+```
+
+(a) ¿Cuáles son las estimaciones de máxima verosimilitud para $\mu$ y
+    $\sigma^2$ en este modelo?
+
+En los apuntes tenemos que los estimadores de máxima verosimilitud para
+$\mu = \bar{Y}$ y para $\sigma^2 = S^2$ que en nuestro caso es
+$\frac{1}{n}\sum_{i=1}^n(Y_i-\bar{Y})^2$. Calculemoslas:
+
+```{r}
+media = mean(Y)
+n = 10
+vector_centrado = (Y-media)^2
+var = 1/n * sum(vector_centrado)
+```
+
+Asi, los estimadores de máxima verosimilitud son `r media` mmHg y
+`r var` mmHg$^2$ para la media y la varianza respectivamente.
+
+(b) Calcula la matriz de información de Fisher para los parámetros $\mu$
+    y $\sigma^2$ en este modelo e interpreta los resultados.
+
+Consideremos una muestra de tamaño $n = 10$ proveniente de una
+distribución normal con media $\mu$ y varianza $\sigma^2$. La función de
+densidad de cada observación es:
+
+$$
+f(y_i; \mu, \sigma^2) = \frac{1}{\sqrt{2\pi\sigma^2}} \exp\left(-\frac{(y_i - \mu)^2}{2\sigma^2}\right)
+$$
+
+Por lo tanto, la función de verosimilitud para la muestra completa es:
+
+$$
+L(y, \mu, \sigma^2) = \prod_{i=1}^{10} \frac{1}{\sqrt{2\pi\sigma^2}} \exp\left(-\frac{(y_i - \mu)^2}{2\sigma^2}\right)
+$$
+
+Simplificando:
+
+$$
+L(y, \mu, \sigma^2) = \left(\frac{1}{\sqrt{2\pi\sigma^2}}\right)^{10} \exp\left(-\frac{1}{2\sigma^2}\sum_{i=1}^{10}(y_i - \mu)^2\right)
+$$
+
+Tomando logaritmos, obtenemos la log-verosimilitud:
+
+$$
+\log L(y, \mu, \sigma^2) = -5\log(2\pi\sigma^2) - \frac{1}{2\sigma^2}\sum_{i=1}^{10}(y_i - \mu)^2
+$$
+
+Derivamos respecto a los parámetros.
+
+La derivada respecto a $\mu$ es:
+
+$$
+U_{\mu} = \frac{\partial \log L}{\partial \mu} = \frac{1}{\sigma^2}\sum_{i=1}^{10}(y_i - \mu)
+$$
+
+La derivada respecto a $\sigma^2$ es:
+
+$$
+U_{\sigma^2} = \frac{\partial \log L}{\partial \sigma^2} = -\frac{10}{2\sigma^2} + \frac{1}{2\sigma^4}\sum_{i=1}^{10}(y_i - \mu)^2
+$$
+
+Calculamos ahora las segundas derivadas necesarias para construir la
+matriz de información de Fisher:
+
+$$
+U_{\mu\mu} = \frac{\partial^2 \log L}{\partial \mu^2} = -\frac{10}{\sigma^2}
+$$
+
+$$
+U_{\mu\sigma^2} = \frac{\partial^2 \log L}{\partial \mu \, \partial \sigma^2} = \frac{1}{\sigma^4}\sum_{i=1}^{10}(y_i - \mu)
+$$
+
+$$
+U_{\sigma^2\sigma^2} = \frac{\partial^2 \log L}{\partial (\sigma^2)^2} = \frac{5}{\sigma^4} - \frac{1}{\sigma^6}\sum_{i=1}^{10}(y_i - \mu)^2
+$$
+
+Bajo ciertas condiciones de regularidad, la matriz de información de
+Fisher se define como el valor esperado negativo de la matriz Hessiana
+de la log-verosimilitud:
+
+$$
+F(\mu, \sigma^2) =
+\begin{pmatrix}
+ -E(U_{\mu\mu}) & -E(U_{\mu\sigma^2}) \\
+ -E(U_{\mu\sigma^2}) & -E(U_{\sigma^2\sigma^2})
+\end{pmatrix}
+$$
+
+Sabemos que $E(Y_i - \mu) =E(Y_i)-\mu=  0$ y que
+$\frac{1}{\sigma^2}\sum_{i=1}^{n}(Y_i - \mu)^2 \sim \chi^2_n$, por lo
+que:
+
+$$
+-E(U_{\mu\mu}) = \frac{10}{\sigma^2}, \quad -E(U_{\mu\sigma^2}) = 0, \quad -E(U_{\sigma^2\sigma^2}) = \frac{5}{\sigma^4}
+$$
+
+Por lo tanto, la matriz de información de Fisher será en nuestro caso
+
+$$
+F(\mu, \sigma^2) =
+\begin{pmatrix}
+1.212121& 0 \\
+0 & 0.07346189
+\end{pmatrix}
+$$
+
+El primer valor de la diagonal es $\frac{n}{\sigma^2}$ por lo tanto
+cuantas más muestras tengamos y cuanto más concentrados estén los datos
+($\sigma^2$ más pequeña), más información tendremos sobre la media. 
+
+El último valor de la diagonal es $\frac{n}{2\sigma^4}$. De la misma
+manera que con la media cuantos más datos, mas información tendemos y
+cuanto mayor sea $\sigma^2$ más difícil será estimar la varianza.
+
+En nuestro caso podemos ver que tenemos más información sobre la media
+que sobre la varianza.
+
+Los valores fuera de la diagonal miden la relación entre los dos
+parámetros, es decir como la información de uno afecta al otro. En
+nuestro caso es 0, por lo tanto tener más información o menos
+información sobre la media no nos afecta a la estimación de la varianza
+y viceversa.\\
+
